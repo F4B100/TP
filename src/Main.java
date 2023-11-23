@@ -37,9 +37,9 @@ public class Main {
 
     public static void print_matrix(long[][] input){
         for (int i = 0; i < input.length; i++) {
-            System.out.printf("bus%d :\t%d",i,0);
-            for (int j = 0; j < input[0].length-1; j++) {
-                System.out.print("\t"+distances[(int) input[i][j]][(int) input[i][j+1]]);
+            System.out.printf("bus%d :",i);
+            for (int j = 0; j < input[0].length; j++) {
+                System.out.print("\t"+input[i][j]);
             }
             System.out.println();
         }
@@ -55,16 +55,6 @@ public class Main {
             }
         }
         return output;
-    }
-
-    public static void print_distances(long[][] input){
-        for (int i = 0; i < input.length; i++) {
-            System.out.printf("bus%d :",i);
-            for (int j = 0; j < input[0].length; j++) {
-                System.out.print("\t"+input[i][j]);
-            }
-            System.out.println();
-        }
     }
 
     public static long[] build_total_distance_matrix(long[][] input){
@@ -125,6 +115,30 @@ public class Main {
         System.out.println("]");
     }
 
+    public static long[] get_duplicate_day_buses(long[][] input){
+        long[] output = new long[input.length];
+        int num_rep = 0;
+        for (int i = 0; i < input.length; i++) {
+            for (int j = 1; j < input[0].length; j++) {
+                if(input[i][j-1] == input[i][j]){
+                    output[num_rep]=i;
+                    num_rep += 1;
+                }
+            }
+        }
+        return output;
+    }
+
+    public static void print_duplicate_buses(long[] input){
+        System.out.printf("Autocarros que permanecem mais de 1 dia consecutivo na mesma cidade: Bus%d %n",input[0]);
+        for (int l = 1;l<input.length;l++) {
+            if(input[l] != 0){
+                System.out.printf("Bus%d ",input[l]);
+            }
+        }
+        System.out.println();
+    }
+
     public static void bus(){
         //alinea a------------------------------------------------------------
         String data = sc.nextLine();
@@ -137,7 +151,7 @@ public class Main {
         print_matrix(planeamento);
         //alinea c------------------------------------------------------------
         long[][] distance_matrix = build_distance_matrix(planeamento);
-        print_distances(distance_matrix);
+        print_matrix(distance_matrix);
         //alinea d------------------------------------------------------------
         long[]  total_distance = build_total_distance_matrix(distance_matrix);
         print_total_distance_matrix(total_distance);
@@ -145,6 +159,8 @@ public class Main {
         print_sum(total_distance);
         //alinea f------------------------------------------------------------
         print_max_distance_and_day(get_max_distance_and_day(distance_matrix));
+        //alinea g------------------------------------------------------------
+        print_duplicate_buses(get_duplicate_day_buses(planeamento));
     }
 
     public static void main(String[] args) {
