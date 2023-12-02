@@ -5,7 +5,33 @@ public class Main {
     public static void print_char(char a,int num){
         for (int i = 1;i <= num;i++){System.out.print(a);}
     }
-    
+
+    public static long[] cut(long[] input, int len){
+        long[] output = new long[len];
+        for (int i = 0; i < len; i++) {
+            output[i] = input[i];
+        }
+        return output;
+    }
+
+    public static boolean vector_has_duplicates(int[] vector){
+        for (int i = 0; i < vector.length-1; i++) {
+            if (vector[i] == vector[i+1]){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean vector_equal (int[] vector){
+        for (int i = 0; i < vector.length - 1; i++) {
+            if(vector[i] != vector[i+1]){
+                return false;
+            }
+        }
+        return true;
+    }
+
     public static long sum_array_members(long[] array){
         long sum = 0;
         for (long num: array) {
@@ -22,6 +48,16 @@ public class Main {
         return filled;
     }
 
+    public static int[][] transpose (int[][] input){
+        int[][] output = new int[input[0].length][input.length];
+        for (int i = 0; i < input[0].length; i++) {
+            for (int j = 0; j < input.length; j++) {
+                output[i][j] = input[j][i];
+            }
+        }
+        return output;
+    }
+
     static Scanner sc = new Scanner(System.in);
 
     static final String[] CITIES = {"Porto","Aveiro","Braga","Coimbra","Lisboa","Fátima"};
@@ -32,7 +68,7 @@ public class Main {
             {130,70,180,0,200,90},
             {300,250,370,200,0,130},
             {200,140,250,90,130,0}
-            };
+    };
 
     public static int[][] build_matrix(int rows, int columns){
         int [][] matrix = new int[rows][columns];
@@ -63,7 +99,7 @@ public class Main {
             output[i][0] = 0;
             for (int j = 1; j < output[0].length; j++) {
                 output[i][j]= DISTANCES[input[i][j-1]]
-                                       [input[i][j]];
+                        [input[i][j]];
             }
         }
         return output;
@@ -120,6 +156,8 @@ public class Main {
     }
 
     public static void print_max_distance_and_day(long[][] input){
+        //this function prints the day in which the combined
+        // distance traveled by all the buses is the biggest
         System.out.printf("máximo de kms num dia: (%d km), dias: [%d",input[0][0],input[1][0]);
         for (int i = 1;i < input[1].length;i++) {
             if(input[1][i] != 0)
@@ -131,58 +169,42 @@ public class Main {
     public static long[] get_duplicate_day_buses(int[][] input){
         long[] output = new long[input.length];
         int num_rep = 0;
+        //this function uses the vector has duplicates function to check
+        //if a bus stays in a city for more than a day
         for (int i = 0; i < input.length; i++) {
-            for (int j = 1; j < input[0].length; j++) {
-                if(input[i][j-1] == input[i][j]){
-                    output[num_rep]=i;
-                    num_rep += 1;
-                }
+            if (vector_has_duplicates(input[i])){
+                output[num_rep] = i;
+                num_rep ++;
             }
         }
-        return output;
+        return cut(output,num_rep);
     }
 
     public static void print_duplicate_buses(long[] input){
+        //this function prints the buses that stayed more than one day in the same city
         System.out.printf("Autocarros que permanecem mais de 1 dia consecutivo na mesma cidade: Bus%d %n",input[0]);
         for (int l = 1;l<input.length;l++) {
-            if(input[l] != 0){
-                System.out.printf("Bus%d ",input[l]);
-            }
+            System.out.printf("Bus%d ",input[l]);
         }
         System.out.println();
     }
 
     public static long[]get_coinciding_days(int[][] input){
         long[] output = new long[2];
-        long first = 0;
-        boolean equal_check,first_check,number_check=false;
-        for (int i = 1; i < input[0].length; i++) {
-            first_check = true;
-            equal_check = true;
-            for(int[] l:input){
-                if(first_check) {
-                    first = l[i];
-                    first_check = false;
-                }
-                if (l[i] != first) {
-                    equal_check = false;
-                    break;
-                }
-            }
-            if(equal_check) {
+        //the following for loop calls the vector_equal function which returns true
+        // if and only if all members of the array are equal and then stores the
+        // day and bus.
+        for (int i = 0; i < input.length; i++) {
+            if(vector_equal(input[i])){
                 output[0] = i;
-                output[1] = first;
-                number_check=true;
+                output[1] = input[i][0];
             }
         }
-        if (number_check) {
-            return output;
-        }else {
-            return new long[]{-1,-1};
-        }
+        return output;
     }
 
     public static void print_last_coinciding_day(long[] input){
+        //this function prints the last day that all the buses were in the same city
         System.out.printf("No dia <%d>, todos os autocarros estarão em <%s>%n",input[0],CITIES[(int) input[1]]);
         System.out.println();
     }
@@ -191,6 +213,7 @@ public class Main {
         long total = sum_array_members(input);
         double[] output = new double[input.length];
         int i = 0;
+        //this for loop calculates the percentage of the total distance traveled by each bus
         for (long l:input) {
             output[i] = l/(double)total;
             i++;
@@ -200,6 +223,9 @@ public class Main {
 
     public static void print_histogtam(double[] input){
         int number,i=0;
+        //this for loop prints the percentage of the total distance traveled by the bus
+        //as a histogram with 10 or fewer asterisks the number of asterisks is the
+        //integer division of the percentage traveled by 10
         for (double l:input) {
             number = (int) Math.floor(l*10);
             System.out.printf("Bus%d (%.2f%%) :",i,100*l);
@@ -214,14 +240,17 @@ public class Main {
         int[] output = new int[2];
         int distance, i;
 
+        //this if statement makes sure the distance variable has a value before going into the main loop
         if (input[0] == 0){
-               distance = DISTANCES[planeamento[input[0]][input[1]]][planeamento[1][input[1]]];
-               output[0] = 1;
-               output[1] = input[1];
+            distance = DISTANCES[planeamento[input[0]][input[1]]][planeamento[1][input[1]]];
+            output[0] = 1;
+            output[1] = input[1];
         }else {
             distance = DISTANCES[planeamento[input[0]][0]][planeamento[input[0]][0]];
         }
 
+        //this loop checks if the distance between two buses is less than the previous smallest distance
+        //this way the output will be the closest bus to the inputted bus
         for (i = 0; i < planeamento.length ; i++){
             if(i != input[0]) {
                 if (DISTANCES[planeamento[input[0]][input[1]]][planeamento[i][input[1]]] < distance) {
@@ -235,6 +264,7 @@ public class Main {
     }
 
     public static void print_closest_bus(int[] bus1, int[] bus2, int[][] planeamento){
+        //this function prints the chosen bus and its closest bus in the chosen day
         System.out.printf("No dia <%d>, <Bus%d> estará em <%s>. Bus<%d> é o mais próximo. Está em <%s> a <%d km>",
                 bus1[1],bus1[0],CITIES[planeamento[bus1[0]][bus1[1]]],bus2[0],CITIES[planeamento[bus2[0]][bus2[1]]],
                 DISTANCES[planeamento[bus1[0]][bus1[1]]][planeamento[bus2[0]][bus2[1]]]);
@@ -242,10 +272,10 @@ public class Main {
 
     public static void bus(){
         //alinea a------------------------------------------------------------
-        //↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ why do we have to read this its never used
+        //↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ this variable is never used
         String data = sc.nextLine();
         int num_autocarro = Integer.parseInt(sc.next()),
-             num_dias = Integer.parseInt(sc.next());
+                num_dias = Integer.parseInt(sc.next());
         int[][] planeamento;
         planeamento = build_matrix(num_autocarro,num_dias);
         int[] alinea_j = {Integer.parseInt(sc.next()),Integer.parseInt(sc.next())};
@@ -271,7 +301,7 @@ public class Main {
         print_duplicate_buses(get_duplicate_day_buses(planeamento));
         //alinea h------------------------------------------------------------
         System.out.println("h)");
-        print_last_coinciding_day(get_coinciding_days(planeamento));
+        print_last_coinciding_day(get_coinciding_days(transpose(planeamento)));
         //alinea i------------------------------------------------------------
         System.out.println("i)");
         print_histogtam(calculate_histogram(total_distance));
